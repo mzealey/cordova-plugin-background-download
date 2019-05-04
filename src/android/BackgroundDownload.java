@@ -51,6 +51,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
+import android.webkit.MimeTypeMap;
 
 /**
  * Based on DownloadManager which is intended to be used for long-running HTTP downloads. Support of Android 2.3. (API 9) and later
@@ -483,7 +484,20 @@ public class BackgroundDownload extends CordovaPlugin {
         }
 
         if (copyingSuccess) {
-            curDownload.getCallbackContext().success();
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(curDownload.getTargetFileUri().toString());
+            String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+
+            long finalId = getDownloadManager().addCompletedDownload(
+                curDownload.getNotificationTitle(),
+                curDownload.getNotificationTitle(),
+                true,       // add to media manager
+                mimeType,
+                destFile.getPath(),
+                destFile.length(),
+                true        // show notification
+            );
+
+            curDownload.getCallbackContext().success(finalId);
         }
 
         cleanUp(curDownload, !copyingSuccess);
