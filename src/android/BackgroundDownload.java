@@ -280,7 +280,7 @@ public class BackgroundDownload extends CordovaPlugin {
                 q.setFilterById(curDownload.getDownloadId());
                 Cursor cursor = mgr.query(q);
                 try {
-                    if (!cursor.moveToFirst()) {
+                    if (cursor == null || !cursor.moveToFirst()) {
                         cleanUp(curDownload, true);
                         curDownload.reportError(ERROR_CANCELED);
                         return;
