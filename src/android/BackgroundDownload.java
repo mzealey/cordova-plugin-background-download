@@ -208,6 +208,10 @@ public class BackgroundDownload extends CordovaPlugin {
                 startAsync(args, callbackContext);
                 return true;
             }
+            if (action.equals("remove")) {
+                remove(args, callbackContext);
+                return true;
+            }
             if (action.equals("stop")) {
                 stop(args, callbackContext);
                 return true;
@@ -336,6 +340,13 @@ public class BackgroundDownload extends CordovaPlugin {
                 }
             }
         }, DOWNLOAD_PROGRESS_UPDATE_TIMEOUT, DOWNLOAD_PROGRESS_UPDATE_TIMEOUT);
+    }
+
+    // Remove the specified item from the DownloadManager library
+    private void remove(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if( args.length() != 1 )
+            return;
+        getDownloadManager().remove(args.getLong(0));
     }
 
     private synchronized void cleanUp(Download curDownload, boolean shouldDeleteTargetFile) {
@@ -497,7 +508,7 @@ public class BackgroundDownload extends CordovaPlugin {
                 true        // show notification
             );
 
-            curDownload.getCallbackContext().success(finalId);
+            curDownload.getCallbackContext().success((int)finalId); // TODO: Can't easily pass long back via PluginResult
         }
 
         cleanUp(curDownload, !copyingSuccess);

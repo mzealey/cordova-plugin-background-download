@@ -42,4 +42,15 @@ BackgroundDownloader.prototype.createDownload = function(uri, resultFile, notifi
     return new DownloadOperation(uri, resultFile, this.uriMatcher, notificationTitle);
 };
 
+var exec = require('cordova/exec'),
+    Promise = require('./Promise');
+BackgroundDownloader.prototype.removeDownload = function(id) {
+    var deferral = new Promise.Deferral(),
+        successCallback = function(result) { deferral.resolve(result); },
+        errorCallback = function(err) { deferral.reject(err) };
+
+    if( id )
+        exec(successCallback, errorCallback, "BackgroundDownload", "remove", [id]);
+};
+
 module.exports = BackgroundDownloader;
