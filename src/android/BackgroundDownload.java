@@ -52,6 +52,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.util.SparseArray;
 import android.webkit.MimeTypeMap;
+import android.content.Intent;
 
 /**
  * Based on DownloadManager which is intended to be used for long-running HTTP downloads. Support of Android 2.3. (API 9) and later
@@ -59,7 +60,6 @@ import android.webkit.MimeTypeMap;
  */
 
 public class BackgroundDownload extends CordovaPlugin {
-
     private static final String TAG = "BackgroundDownload";
 
     private static final int ERROR_CANCELED = Integer.MAX_VALUE;
@@ -512,6 +512,10 @@ public class BackgroundDownload extends CordovaPlugin {
                 destFile.length(),
                 true        // show notification
             );
+
+            Intent scanFileIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            scanFileIntent.setData(Uri.fromFile(destFile));
+            this.cordova.getContext().sendBroadcast(scanFileIntent);
 
             curDownload.getCallbackContext().success((int)finalId); // TODO: Can't easily pass long back via PluginResult
         }
