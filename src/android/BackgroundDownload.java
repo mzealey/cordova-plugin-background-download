@@ -45,6 +45,7 @@ import org.json.JSONObject;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.os.Build;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -551,7 +552,8 @@ public class BackgroundDownload extends CordovaPlugin {
     }
 
     private boolean checkPermissions(JSONArray args, CallbackContext callbackContext) {
-        if (!PermissionHelper.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R
+                && !PermissionHelper.hasPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             permissionRequests.put(permissionRequests.size(), new PermissionsRequest(args, callbackContext));
             PermissionHelper.requestPermission(this, permissionRequests.size() - 1, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             return false;
