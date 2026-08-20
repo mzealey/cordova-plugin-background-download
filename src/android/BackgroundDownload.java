@@ -98,7 +98,7 @@ public class BackgroundDownload extends CordovaPlugin {
                 uriMatcher = args.getString(2);
             }
 
-            String notificationTitle = "org.apache.cordova.backgroundDownload plugin";
+            String notificationTitle = "Downloader";
             if (args.length() > 3 && !"null".equals(args.getString(3))) {
                 notificationTitle = args.getString(3);
             }
@@ -503,10 +503,18 @@ public class BackgroundDownload extends CordovaPlugin {
         if (copyingSuccess) {
             String fileExtension = MimeTypeMap.getFileExtensionFromUrl(curDownload.getTargetFileUri().toString());
             String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
+            if (mimeType == null) {
+                mimeType = "application/octet-stream";
+            }
+
+            String title = curDownload.getNotificationTitle();
+            if (title == null || title.isEmpty()) {
+                title = "Downloader";
+            }
 
             long finalId = getDownloadManager().addCompletedDownload(
-                curDownload.getNotificationTitle(),
-                curDownload.getNotificationTitle(),
+                title,
+                title,
                 true,       // add to media manager
                 mimeType,
                 destFile.getPath(),
